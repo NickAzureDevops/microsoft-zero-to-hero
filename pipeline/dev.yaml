@@ -20,7 +20,7 @@ variables:
   - name: backendAzureRmStorageAccountName
     value: 'terraformstate122024'
   - name: serviceConnection 
-    value: SP
+    value: 'SP'
 
 pool:
   vmImage: ubuntu-latest
@@ -73,7 +73,7 @@ stages:
               provider: 'azurerm'
               command: "plan"
               workingDirectory: "${{ variables.workingDirectory }}"
-              environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
+              environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
 
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
