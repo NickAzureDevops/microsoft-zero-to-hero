@@ -61,7 +61,6 @@ stages:
             inputs:
               provider: "azurerm"
               command: "destroy"
-              commandOptions: '-var="context=${{ parameters.context }}"'
               workingDirectory: "${{ variables.workingDirectory }}"
               environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
                   
@@ -73,7 +72,6 @@ stages:
             inputs:
               provider: 'azurerm'
               command: "plan"
-              commandOptions: '-var="context=${{ parameters.context }}" -out=$(Build.SourceBranchName).tfplan'
               workingDirectory: "${{ variables.workingDirectory }}"
               environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
 
