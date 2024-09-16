@@ -19,6 +19,8 @@ variables:
     value: 'terraform-tfstate-rg'
   - name: backendAzureRmStorageAccountName
     value: 'terraformstate122024'
+  - name: serviceConnection 
+    value: SP
 
 pool:
   vmImage: ubuntu-latest
