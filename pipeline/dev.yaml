@@ -19,6 +19,8 @@ variables:
     value: 'terraform-tfstate-rg'
   - name: backendAzureRmStorageAccountName
     value: 'terraformstate122024'
+  - name: backendAzureRmContainerName
+    value: tfstate
   - name: serviceConnection 
     value: 'SP'
 
