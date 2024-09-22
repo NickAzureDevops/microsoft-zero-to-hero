@@ -79,7 +79,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'plan'
-          workingDirectory: '$(workingDirectory)'
+          workingDirectory: "${{ variables.workingDirectory }}"
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
         env:
           ARM_USE_AZUREAD: true
@@ -119,7 +119,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'apply'
-          workingDirectory: '$(workingDirectory)'
+          workingDirectory: "${{ variables.workingDirectory }}"
           environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
         env:
           ARM_USE_AZUREAD: true
