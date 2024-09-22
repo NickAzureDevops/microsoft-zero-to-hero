@@ -4,6 +4,16 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+  - name: apply
+    displayName: Apply
+    type: boolean
+    default: true
+  - name: destroy
+    displayName: Destroy
+    type: boolean
+    default: false
+
 variables: 
   - name: workingDirectory
     value: "$(System.DefaultWorkingDirectory)/terraform/"
@@ -65,11 +75,12 @@ stages:
   
       - task: TerraformTaskV4@4
         displayName: 'terraform plan'
+        condition: or(and(succeeded(), eq('${{ parameters.apply }}', 'true')), and(succeeded(), eq('${{ parameters.apply }}', 'false'), eq('${{ parameters.destroy }}', 'false')))
         inputs:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(workingDirectory)'
-          environmentServiceNameAzureRM: '$(serviceConnection)'
+          environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
         env:
           ARM_USE_AZUREAD: true
 
@@ -104,10 +115,11 @@ stages:
 
       - task: TerraformTaskV4@4
         displayName: 'terraform apply'
+        condition: eq('${{ parameters.apply }}', 'true')
         inputs:
           provider: 'azurerm'
           command: 'apply'
           workingDirectory: '$(workingDirectory)'
-          environmentServiceNameAzureRM: '$(serviceConnection)'
+          environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
         env:
           ARM_USE_AZUREAD: true
