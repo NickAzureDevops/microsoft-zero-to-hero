@@ -71,8 +71,9 @@ stages:
           provider: "azurerm"
           command: "destroy"
           workingDirectory: "${{ variables.workingDirectory }}"
-          ARM_USE_OIDC: $(ARM_USE_OIDC)
-  
+        env:
+          ARM_USE_AZUREAD: true  
+      
       - task: TerraformTaskV4@4
         displayName: 'terraform plan'
         condition: or(and(succeeded(), eq('${{ parameters.apply }}', 'true')), and(succeeded(), eq('${{ parameters.apply }}', 'false'), eq('${{ parameters.destroy }}', 'false')))
@@ -83,7 +84,6 @@ stages:
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
         env:
           ARM_USE_AZUREAD: true
-
 - stage: deploy
   displayName: 'Deploy'
   dependsOn:
