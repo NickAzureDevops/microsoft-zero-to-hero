@@ -1,5 +1,5 @@
 location = "uksouth"
-project_name = "Microsoft Zero to Hero"
+project_name = "Demo"
 name = "zero-to-hero"
 azure_devops_org_service_url = "https://dev.azure.com/nicholaschang/"
 tenant_id = "85c4cc12-7b58-4cd2-84c4-c7b9698d8670"
