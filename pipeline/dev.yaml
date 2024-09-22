@@ -6,7 +6,7 @@ pool:
 
 variables: 
   - name: workingDirectory
-    value: 'terraformtask'
+    value: "$(System.DefaultWorkingDirectory)/terraform/"
   - name: backendAzureRmKey
     value: 'microsoft-zero-hero.tfstate'
   - name: backendAzureRmResourceGroupName
@@ -52,7 +52,17 @@ stages:
           provider: 'azurerm'
           command: 'validate'
           workingDirectory: '$(workingDirectory)'
-      
+
+      - task: TerraformTaskV4@4
+        condition: eq('${{ parameters.destroy }}', 'true')
+        displayName: Terraform Destroy
+        name: terraformDestroy
+        inputs:
+          provider: "azurerm"
+          command: "destroy"
+          workingDirectory: "${{ variables.workingDirectory }}"
+          ARM_USE_OIDC: $(ARM_USE_OIDC)
+  
       - task: TerraformTaskV4@4
         displayName: 'terraform plan'
         inputs:
