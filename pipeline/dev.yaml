@@ -42,17 +42,6 @@ stages:
         inputs:
           terraformVersion: 'latest'
 
-      - task: AzureCLI@2
-        displayName: 'Authenticate and Set Environment Variables'
-        inputs:
-          azureSubscription: '$(serviceConnection)'
-          scriptType: bash
-          scriptLocation: inlineScript
-          addSpnToEnvironment: true
-          inlineScript: |
-            echo "Setting up environment variables for OIDC"
-            export ARM_USE_AZUREAD=true
-
       - task: TerraformTaskV4@4
         displayName: 'terraform init'
         inputs:
@@ -102,38 +91,24 @@ stages:
         inputs:
           terraformVersion: 'latest'
 
-      - task: AzureCLI@2
-        displayName: 'Authenticate and Set Environment Variables'
-        inputs:
-          azureSubscription: '$(serviceConnection)'
-          scriptType: bash
-          scriptLocation: inlineScript
-          addSpnToEnvironment: true
-          inlineScript: |
-            echo "Setting up environment variables for OIDC"
-            export ARM_USE_AZUREAD=true
-
       - task: TerraformTaskV4@4
-        displayName: 'terraform init'
+        displayName: 'terraform apply'
+        condition: and(succeeded(), eq('${{ parameters.apply }}', 'true'))
         inputs:
           provider: 'azurerm'
-          command: 'init'
+          command: 'apply'
           workingDirectory: '$(workingDirectory)'
-          backendServiceArm: '$(serviceConnection)'
-          backendAzureRmResourceGroupName: '$(backendAzureRmResourceGroupName)'
-          backendAzureRmStorageAccountName: '$(backendAzureRmStorageAccountName)'
-          backendAzureRmContainerName: '$(backendAzureRmContainerName)'
-          backendAzureRmKey: '$(backendAzureRmKey)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
 
       - task: TerraformTaskV4@4
-        displayName: 'terraform apply'
-        condition: eq('${{ parameters.apply }}', 'true')
+        displayName: 'terraform destroy'
+        condition: and(succeeded(), eq('${{ parameters.destroy }}', 'true'))
         inputs:
           provider: 'azurerm'
-          command: 'apply'
-          workingDirectory: "${{ variables.workingDirectory }}"
-          environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
+          command: 'destroy'
+          workingDirectory: '$(workingDirectory)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
