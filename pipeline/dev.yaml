@@ -20,7 +20,7 @@ variables:
   - name: backendAzureRmStorageAccountName
     value: 'terraformstate122024'
   - name: backendAzureRmContainerName
-    value: tfstate
+    value: 'tfstate'
   - name: serviceConnection 
     value: 'SP'
 
@@ -38,10 +38,12 @@ stages:
         steps:
           - checkout: self
             displayName: Checkout Terraform Module
+
           - task: TerraformInstaller@0
             displayName: Install Terraform
             inputs:
               terraformVersion: 'latest'
+
           - task: TerraformTaskV4@4
             displayName: Terraform Init
             inputs:
@@ -80,10 +82,11 @@ stages:
 
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
+            condition: eq('${{ parameters.apply }}', 'true')
             inputs:
               provider: 'azurerm'
               command: 'apply'
-              commandOptions: $(Build.SourceBranchName).tfplan
+              commandOptions: '-auto-approve'
               workingDirectory: "${{ variables.workingDirectory }}"
               environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
             env:
