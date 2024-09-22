@@ -1,0 +1,6 @@
+location = "uksouth"
+project_name = "Microsoft Zero to Hero"
+name = "zero-to-hero"
+azure_devops_org_service_url = "https://dev.azure.com/nicholaschang/"
+subscription_id = ""
+tenant_id = ""

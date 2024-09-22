@@ -1,0 +1,103 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables: 
+  - name: workingDirectory
+    value: 'terraformtask'
+  - name: backendAzureRmKey
+    value: 'microsoft-zero-hero.tfstate'
+  - name: backendAzureRmResourceGroupName
+    value: 'terraform-tfstate-rg'
+  - name: backendAzureRmStorageAccountName
+    value: 'terraformstate122024'
+  - name: backendAzureRmContainerName
+    value: 'tfstate'
+  - name: serviceConnection 
+    value: 'SP'
+
+stages:
+- stage: validate
+  displayName: 'Validate'
+  jobs:
+    - job: Validate
+      steps:
+      - checkout: self
+        clean: true
+
+      - task: TerraformInstaller@1
+        displayName: 'Install Terraform'
+        inputs:
+          terraformVersion: 'latest'
+
+      - task: TerraformTaskV4@4
+        displayName: 'terraform init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(workingDirectory)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmResourceGroupName: '$(backendAzureRmResourceGroupName)'
+          backendAzureRmStorageAccountName: '$(backendAzureRmStorageAccountName)'
+          backendAzureRmContainerName: '$(backendAzureRmContainerName)'
+          backendAzureRmKey: '$(backendAzureRmKey)'
+        env:
+          ARM_USE_AZUREAD: true
+      
+      - task: TerraformTaskV4@4
+        displayName: 'terraform validate'
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(workingDirectory)'
+      
+      - task: TerraformTaskV4@4
+        displayName: 'terraform plan'
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(workingDirectory)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
+        env:
+          ARM_USE_AZUREAD: true
+
+- stage: deploy
+  displayName: 'Deploy'
+  dependsOn:
+  - validate
+  jobs:
+    - job: 'Deploy'
+      steps:
+      - checkout: self
+        clean: true
+      
+      - task: TerraformInstaller@1
+        displayName: 'Install Terraform'
+        inputs:
+          terraformVersion: 'latest'
+
+      - task: TerraformTaskV4@4
+        displayName: 'terraform init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(workingDirectory)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmResourceGroupName: '$(backendAzureRmResourceGroupName)'
+          backendAzureRmStorageAccountName: '$(backendAzureRmStorageAccountName)'
+          backendAzureRmContainerName: '$(backendAzureRmContainerName)'
+          backendAzureRmKey: '$(backendAzureRmKey)'
+        env:
+          ARM_USE_AZUREAD: true
+
+      - task: TerraformTaskV4@4
+        displayName: 'terraform apply'
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: '$(workingDirectory)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
+        env:
+          ARM_USE_AZUREAD: true
