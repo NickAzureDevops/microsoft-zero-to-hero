@@ -76,6 +76,7 @@ stages:
               command: "plan"
               workingDirectory: "${{ variables.workingDirectory }}"
               environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
+              addSpnToEnvironment: true
 
           - task: TerraformTaskV4@4
             displayName: Terraform Apply
