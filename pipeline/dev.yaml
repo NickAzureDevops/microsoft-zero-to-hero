@@ -42,6 +42,17 @@ stages:
         inputs:
           terraformVersion: 'latest'
 
+      - task: AzureCLI@2
+        displayName: 'Authenticate and Set Environment Variables'
+        inputs:
+          azureSubscription: '$(serviceConnection)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          inlineScript: |
+            echo "Setting up environment variables for OIDC"
+            export ARM_USE_AZUREAD=true
+
       - task: TerraformTaskV4@4
         displayName: 'terraform init'
         inputs:
@@ -55,24 +66,15 @@ stages:
           backendAzureRmKey: '$(backendAzureRmKey)'
         env:
           ARM_USE_AZUREAD: true
-      
+
       - task: TerraformTaskV4@4
         displayName: 'terraform validate'
         inputs:
           provider: 'azurerm'
           command: 'validate'
           workingDirectory: '$(workingDirectory)'
-
-      - task: TerraformTaskV4@4
-        condition: eq('${{ parameters.destroy }}', 'true')
-        displayName: Terraform Destroy
-        name: terraformDestroy
-        inputs:
-          provider: "azurerm"
-          command: "destroy"
-          workingDirectory: "${{ variables.workingDirectory }}"
         env:
-          ARM_USE_AZUREAD: true  
+          ARM_USE_AZUREAD: true
       
       - task: TerraformTaskV4@4
         displayName: 'terraform plan'
@@ -84,6 +86,7 @@ stages:
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
         env:
           ARM_USE_AZUREAD: true
+
 - stage: deploy
   displayName: 'Deploy'
   dependsOn:
@@ -98,6 +101,17 @@ stages:
         displayName: 'Install Terraform'
         inputs:
           terraformVersion: 'latest'
+
+      - task: AzureCLI@2
+        displayName: 'Authenticate and Set Environment Variables'
+        inputs:
+          azureSubscription: '$(serviceConnection)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          inlineScript: |
+            echo "Setting up environment variables for OIDC"
+            export ARM_USE_AZUREAD=true
 
       - task: TerraformTaskV4@4
         displayName: 'terraform init'

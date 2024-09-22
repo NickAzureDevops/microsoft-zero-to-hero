@@ -17,7 +17,7 @@ resource "azurerm_user_assigned_identity" "ui" {
 
 resource "azuredevops_serviceendpoint_azurerm" "endpoint" {
   project_id                             = data.azuredevops_project.project.id
-  service_endpoint_name                  = "service-endpoint-${var.name}"
+  service_endpoint_name                  = "service-endpoint-${var.project_name}"
   description                            = "Managed by Terraform"
   service_endpoint_authentication_scheme = "WorkloadIdentityFederation"
   credentials {
