@@ -29,7 +29,7 @@ resource "azuredevops_serviceendpoint_azurerm" "endpoint" {
 }
 
 resource "azurerm_federated_identity_credential" "federated_identity" {
-  name                = "example-federated-credential"
+  name                = "demo-federated-credential"
   resource_group_name = azurerm_resource_group.rg.name
   parent_id           = azurerm_user_assigned_identity.ui.id
   audience            = ["api://AzureADTokenExchange"]
