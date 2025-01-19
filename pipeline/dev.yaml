@@ -113,7 +113,7 @@ stages:
           provider: 'azurerm'
           command: 'apply'
           workingDirectory: '$(workingDirectory)'
-          commandOptions: '$(workingDirectory)/demo.tfplan'
+          commandOptions: '-auto-approve $(workingDirectory)/demo.tfplan'
           environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
