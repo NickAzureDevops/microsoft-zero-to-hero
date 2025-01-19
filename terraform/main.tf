@@ -17,7 +17,7 @@ resource "azurerm_user_assigned_identity" "ui" {
 
 resource "azuredevops_serviceendpoint_azurerm" "endpoint" {
   project_id                             = data.azuredevops_project.project.id
-  service_endpoint_name                  = "service-endpoint-${var.name}"
+  service_endpoint_name                  = "service-endpoint-${var.project_name}"
   description                            = "Managed by Terraform"
   service_endpoint_authentication_scheme = "WorkloadIdentityFederation"
   credentials {
@@ -29,7 +29,7 @@ resource "azuredevops_serviceendpoint_azurerm" "endpoint" {
 }
 
 resource "azurerm_federated_identity_credential" "federated_identity" {
-  name                = "example-federated-credential"
+  name                = "demo-federated-credential"
   resource_group_name = azurerm_resource_group.rg.name
   parent_id           = azurerm_user_assigned_identity.ui.id
   audience            = ["api://AzureADTokenExchange"]
