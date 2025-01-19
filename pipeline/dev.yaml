@@ -26,8 +26,8 @@ variables:
   - name: backendAzureRmContainerName
     value: 'tfstate'
   - name: serviceConnection 
-    value: 'OldSP'
-
+    value: 'demo-ado-connection'
+  
 stages:
 - stage: validate
   displayName: 'Validate'
@@ -92,12 +92,27 @@ stages:
           terraformVersion: 'latest'
 
       - task: TerraformTaskV4@4
+        displayName: 'terraform init'
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(workingDirectory)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmResourceGroupName: '$(backendAzureRmResourceGroupName)'
+          backendAzureRmStorageAccountName: '$(backendAzureRmStorageAccountName)'
+          backendAzureRmContainerName: '$(backendAzureRmContainerName)'
+          backendAzureRmKey: '$(backendAzureRmKey)'
+        env:
+          ARM_USE_AZUREAD: true
+
+      - task: TerraformTaskV4@4
         displayName: 'terraform apply'
         condition: and(succeeded(), eq('${{ parameters.apply }}', 'true'))
         inputs:
           provider: 'azurerm'
           command: 'apply'
           workingDirectory: '$(workingDirectory)'
+          commandOptions: 'demo.tfplan'
           environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
