@@ -73,6 +73,7 @@ stages:
           command: 'plan'
           workingDirectory: "${{ variables.workingDirectory }}"
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
+          commandOptions: '-out=$(workingDirectory)/demo.tfplan'
         env:
           ARM_USE_AZUREAD: true
 
@@ -112,7 +113,7 @@ stages:
           provider: 'azurerm'
           command: 'apply'
           workingDirectory: '$(workingDirectory)'
-          commandOptions: 'demo.tfplan'
+          commandOptions: '$(workingDirectory)/demo.tfplan'
           environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
