@@ -27,7 +27,7 @@ variables:
     value: 'tfstate'
   - name: serviceConnection 
     value: 'demo'
-  
+
 stages:
 - stage: validate
   displayName: 'Validate'
@@ -41,6 +41,17 @@ stages:
         displayName: 'Install Terraform'
         inputs:
           terraformVersion: 'latest'
+
+      - task: AzureCLI@2
+        displayName: 'Authenticate and Set Environment Variables'
+        inputs:
+          azureSubscription: '$(serviceConnection)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          inlineScript: |
+            echo "Setting up environment variables for OIDC"
+            export ARM_USE_AZUREAD=true
 
       - task: TerraformTaskV4@4
         displayName: 'terraform init'
@@ -73,7 +84,6 @@ stages:
           command: 'plan'
           workingDirectory: "${{ variables.workingDirectory }}"
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
-          commandOptions: '-out=$(workingDirectory)/demo.tfplan'
         env:
           ARM_USE_AZUREAD: true
 
@@ -92,6 +102,17 @@ stages:
         inputs:
           terraformVersion: 'latest'
 
+      - task: AzureCLI@2
+        displayName: 'Authenticate and Set Environment Variables'
+        inputs:
+          azureSubscription: '$(serviceConnection)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          inlineScript: |
+            echo "Setting up environment variables for OIDC"
+            export ARM_USE_AZUREAD=true
+
       - task: TerraformTaskV4@4
         displayName: 'terraform init'
         inputs:
@@ -108,23 +129,11 @@ stages:
 
       - task: TerraformTaskV4@4
         displayName: 'terraform apply'
-        condition: and(succeeded(), eq('${{ parameters.apply }}', 'true'))
+        condition: eq('${{ parameters.apply }}', 'true')
         inputs:
           provider: 'azurerm'
           command: 'apply'
-          workingDirectory: '$(workingDirectory)'
-          commandOptions: '$(workingDirectory)/demo.tfplan'
-          environmentServiceNameAzureRM: '$(serviceConnection)'
-        env:
-          ARM_USE_AZUREAD: true
-
-      - task: TerraformTaskV4@4
-        displayName: 'terraform destroy'
-        condition: and(succeeded(), eq('${{ parameters.destroy }}', 'true'))
-        inputs:
-          provider: 'azurerm'
-          command: 'destroy'
-          workingDirectory: '$(workingDirectory)'
-          environmentServiceNameAzureRM: '$(serviceConnection)'
+          workingDirectory: "${{ variables.workingDirectory }}"
+          environmentServiceNameAzureRM: '${{ variables.serviceConnection }}'
         env:
           ARM_USE_AZUREAD: true
