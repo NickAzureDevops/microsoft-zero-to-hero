@@ -28,16 +28,12 @@ This demo showcases how to set up and use workload federated identity with Azure
 2. Add a platform configuration (e.g., Web) and set the redirect URIs.
 3. Enable ID tokens.
 
-### 3. Assign API Permissions
+### 3. Create a Service Principal
 
-1. Go to the `API permissions` section of the registered application.
-2. Add the necessary API permissions (e.g., `User.Read`).
-3. Grant admin consent for the permissions.
+1. Run the following command to create a service principal:
 
-### 4. Create a Service Connection in Azure DevOps
-
-1. Navigate to your Azure DevOps project.
-2. Go to `Project settings` > `Service connections`.
-3. Create a new service connection using workload identity federation with OIDC.
-4. Configure the service connection to use federated credentials.
-
+    ```bash
+    az ad sp create-for-rbac --name <service-principal-name> --role contributor --scopes /subscriptions/<subscription-id>
+    ```
+2. Note the `appId`, `password`, and `tenant`.
+    
