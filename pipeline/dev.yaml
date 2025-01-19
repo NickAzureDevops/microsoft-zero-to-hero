@@ -55,7 +55,6 @@ stages:
           backendAzureRmKey: '$(backendAzureRmKey)'
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
       - task: TerraformTaskV4@4
         displayName: 'terraform validate'
@@ -65,7 +64,6 @@ stages:
           workingDirectory: '$(workingDirectory)'
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
       
       - task: TerraformTaskV4@4
         displayName: 'terraform plan'
@@ -77,7 +75,6 @@ stages:
           environmentServiceNameAzureRM: "${{ variables.serviceConnection }}"
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
 - stage: deploy
   displayName: 'Deploy'
@@ -107,7 +104,6 @@ stages:
           backendAzureRmKey: '$(backendAzureRmKey)'
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
       - task: TerraformTaskV4@4
         displayName: 'terraform apply'
@@ -120,7 +116,6 @@ stages:
           environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
       - task: TerraformTaskV4@4
         displayName: 'terraform destroy'
@@ -132,4 +127,3 @@ stages:
           environmentServiceNameAzureRM: '$(serviceConnection)'
         env:
           ARM_USE_AZUREAD: true
-          AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
